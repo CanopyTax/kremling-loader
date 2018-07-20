@@ -1,0 +1,21 @@
+{
+  "name": "kremling-loader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "@geoctrl",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-serve --config ./webpack.config.js --content ./dev-env --port 8080"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.0.0",
+    "css-loader": "^1.0.0",
+    "cssnano": "^4.0.3",
+    "jest": "^23.4.1",
+    "loader-utils": "^1.1.0",
+    "postcss": "^7.0.0",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-serve": "^2.0.2"
+  }
+}
