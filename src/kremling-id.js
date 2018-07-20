@@ -8,7 +8,7 @@ function KremId() {
       this.id = this.id + 1;
   };
   this.getSelector = function() {
-    return `.kremling_id_${this.id}`;
+    return `.krem_id_${this.id}`;
   }
 }
 

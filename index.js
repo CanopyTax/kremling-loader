@@ -25,7 +25,7 @@ module.exports = function(source) {
       if (result.css) {
         callback(null, `export default { styles: \`${result.toString()}\`, id: \`${kremId.getSelector()}\` };`);
       } else {
-        callback({}, `export default {};`);
+        callback(null, `export default { styles: '', id: \`${kremId.getSelector()}\`};`);
       }
     });
 };
