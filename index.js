@@ -23,9 +23,9 @@ module.exports = function(source) {
     })
     .then((result) => {
       if (result.css) {
-        callback(null, `export default { styles: \`${result.toString()}\`, id: \`${kremId.getSelector()}\` };`);
+        callback(null, `export default { styles: \`${result.toString()}\`, id: '${kremId.id}' };`);
       } else {
-        callback(null, `export default { styles: '', id: \`${kremId.getSelector()}\`};`);
+        callback(null, `export default { styles: '', id: ${kremId.id}};`);
       }
     });
 };

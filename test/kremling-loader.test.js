@@ -29,37 +29,28 @@ describe('kremling-loader', () => {
 
   test('should prepend all selectors with kremling selector', done => {
     mockKremlingLoader.run('.a{}', result => {
-      expect(parseEsModuleString(result).styles).toBe('.krem_id_1.a,.krem_id_1 .a{}');
+      expect(parseEsModuleString(result).styles).toBe('[data-kremling="1"] .a,[data-kremling="1"].a{}');
       done();
     })
   });
 
-  test('should reverse order of the first selector if it doesn\'t start with . or #', done => {
+  test('should reverse order of the first selector if the selector is not a class or id', done => {
     mockKremlingLoader.run('[title]{}', result => {
-      expect(parseEsModuleString(result).styles).toBe('[title].krem_id_1,.krem_id_1 [title]{}');
+      expect(parseEsModuleString(result).styles).toBe('[data-kremling="1"] [title],[title][data-kremling="1"]{}');
       done();
     });
   })
 
   test('should build kremling selectors from multiple css statements', done => {
     const css = `
-      .wow,
-      .someRule {
+      .okay,
+      input {
         background-color: red;
-      }
-
-      .oliver,
-      .cromwell {
-        background-color: green;
       }`;
 
     const newCss = `
-      .krem_id_1.wow,.krem_id_1 .wow,.krem_id_1.someRule,.krem_id_1 .someRule {
+      [data-kremling="1"] .okay,[data-kremling="1"] input,[data-kremling="1"].okay,input[data-kremling="1"] {
         background-color: red;
-      }
-
-      .krem_id_1.oliver,.krem_id_1 .oliver,.krem_id_1.cromwell,.krem_id_1 .cromwell {
-        background-color: green;
       }`;
       mockKremlingLoader.run(css, result => {
         expect((parseEsModuleString(result).styles).trim()).toEqual(newCss.trim());

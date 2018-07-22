@@ -1,21 +1,29 @@
 const postcss = require('postcss');
+const parser = require('postcss-selector-parser');
 const kremId = require('./kremling-id');
+
+function parseSelectors(ruleSelectors, space) {
+  return parser(selectors => {
+    selectors.each(selector => {
+      const attr = parser.attribute({ attribute: `data-kremling="${kremId.id}"` });
+      const combinator = parser.combinator({ value: ' ' });
+
+      if (selector.at(0).type === 'class' || selector.at(0).type == 'id' || space) {
+        selector.insertBefore(selector.at(0), attr);
+        if (space) selector.insertAfter(selector.at(0), combinator);
+      } else {
+        selector.insertAfter(selector.at(0), attr);
+      }
+      return selector;
+    });
+  }).processSync(ruleSelectors, { lossless: false });
+}
 
 module.exports = postcss.plugin('postcss-kremling-plugin', function () {
   return function (root) {
     kremId.increment();
     root.walkRules(function (rule) {
-      // split by comma and remove white space and returns
-      const selectors = rule.selector.split(',');
-      rule.selector = selectors.map(selector => {
-        selector = selector.replace(/[\s]/g, '');
-        if (selector[0] !== '.'
-          && selector[0] !== '#') {
-          return `${selector}${kremId.getSelector()},${kremId.getSelector()} ${selector}`;
-        } else {
-          return `${kremId.getSelector()}${selector},${kremId.getSelector()} ${selector}`;
-        }
-      }).join(',');
+      rule.selector = `${parseSelectors(rule.selector, true)},${parseSelectors(rule.selector, false)}`;
       return rule;
     });
   };

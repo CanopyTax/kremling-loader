@@ -7,9 +7,6 @@ function KremId() {
   this.increment = function() {
       this.id = this.id + 1;
   };
-  this.getSelector = function() {
-    return `.krem_id_${this.id}`;
-  }
 }
 
 module.exports = new KremId();
