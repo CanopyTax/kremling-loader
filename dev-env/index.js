@@ -1,5 +1,6 @@
 import css from './main.css';
 import other from './other.css';
+console.log(css);
 
 const cssEl = document.createElement('div');
 const otherEl = document.createElement('div');

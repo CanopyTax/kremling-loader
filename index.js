@@ -4,9 +4,14 @@ const kremId = require('./src/kremling-id');
 const postcssKremling = require('./src/postcss-kremling-plugin');
 
 module.exports = function(source) {
+  const loaderOptions = getOptions(this) || {};
+  let kremlingNamespace = '';
+  if (loaderOptions.namespace && typeof loaderOptions.namespace === 'string') {
+    kremlingNamespace = `, namespace: \`${loaderOptions.namespace}\``;
+  }
   const defaultOptions = {
     plugins: {},
-    ...getOptions(this),
+    ...loaderOptions.postcss,
   };
 
   const { plugins, ...restOfOptions } = defaultOptions;
@@ -23,9 +28,9 @@ module.exports = function(source) {
     })
     .then((result) => {
       if (result.css) {
-        callback(null, `export default { styles: \`${result.toString()}\`, id: '${kremId.id}' };`);
+        callback(null, `module.exports = { styles: \`${result.toString()}\`, id: '${kremId.id}'${kremlingNamespace} };`);
       } else {
-        callback(null, `export default { styles: '', id: '${kremId.id}'};`);
+        callback(null, `module.exports = { styles: '', id: '${kremId.id}'${kremlingNamespace} };`);
       }
     });
 };

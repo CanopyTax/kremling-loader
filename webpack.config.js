@@ -16,9 +16,12 @@ config.module = {
         {
           loader: path.resolve(__dirname, 'index.js'),
           options: {
-            plugins: {
-              'autoprefixer': {},
-              'cssnano': {},
+            namespace: 'custom',
+            postcss: {
+              plugins: {
+                'autoprefixer': {},
+                'cssnano': {},
+              },  
             },
           },
         },
