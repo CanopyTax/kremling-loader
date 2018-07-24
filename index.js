@@ -7,7 +7,7 @@ module.exports = function(source) {
   const loaderOptions = getOptions(this) || {};
   let kremlingNamespace = '';
   if (loaderOptions.namespace && typeof loaderOptions.namespace === 'string') {
-    kremlingNamespace = `, namespace: \`${loaderOptions.namespace}\``;
+    kremlingNamespace = `namespace: '${loaderOptions.namespace}'`;
   }
   const defaultOptions = {
     plugins: {},
@@ -28,9 +28,9 @@ module.exports = function(source) {
     })
     .then((result) => {
       if (result.css) {
-        callback(null, `module.exports = { styles: \`${result.toString()}\`, id: '${kremId.id}'${kremlingNamespace} };`);
+        callback(null, `module.exports = { styles: \`${result.toString().replace(/(\s)+/g, ' ')}\`, id: '${kremId.id}', ${kremlingNamespace} };`);
       } else {
-        callback(null, `module.exports = { styles: '', id: '${kremId.id}'${kremlingNamespace} };`);
+        callback(null, `module.exports = { styles: '', id: '${kremId.id}', ${kremlingNamespace} };`);
       }
     });
 };

@@ -48,10 +48,7 @@ describe('kremling-loader', () => {
         background-color: red;
       }`;
 
-    const newCss = `
-      [data-kremling="1"] .okay,[data-kremling="1"] input,[data-kremling="1"].okay,input[data-kremling="1"] {
-        background-color: red;
-      }`;
+    const newCss = '[data-kremling="1"] .okay,[data-kremling="1"] input,[data-kremling="1"].okay,input[data-kremling="1"] { background-color: red; }';
       mockKremlingLoader.run(css, result => {
         expect((parseEsModuleString(result).styles).trim()).toEqual(newCss.trim());
         done();
