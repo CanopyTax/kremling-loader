@@ -1,7 +1,8 @@
 # kremling-loader
 
-Kremling webpack loader is an abstraction on top of the awesome [`Postcss`](https://github.com/postcss/postcss)
-project. It allows you to process your css the way you'd like, and then it passes formatted data
+The [`Kremling`](https://github.com/CanopyTax/kremling) webpack loader is an abstraction
+on top of the awesome [`Postcss`](https://github.com/postcss/postcss) project.
+It allows you to process your css the way you'd like, and then it passes formatted data
 to the `<Scoped>` component.
 
 ## Install
