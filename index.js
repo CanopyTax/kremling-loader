@@ -5,9 +5,11 @@ const postcssKremling = require('./src/postcss-kremling-plugin');
 
 module.exports = function(source) {
   const loaderOptions = getOptions(this) || {};
-  let kremlingNamespace = '';
+  let kremlingNamespace = 'data-kremling';
+  let kremlingNamespaceString = '';
   if (loaderOptions.namespace && typeof loaderOptions.namespace === 'string') {
-    kremlingNamespace = `namespace: '${loaderOptions.namespace}'`;
+    kremlingNamespace = loaderOptions.namespace;
+    kremlingNamespaceString = `namespace: '${loaderOptions.namespace}'`;
   }
   const defaultOptions = {
     plugins: {},
@@ -20,7 +22,7 @@ module.exports = function(source) {
   });
 
   const callback = this.async();
-  postcss([ ...pluginsInit, postcssKremling() ])
+  postcss([ ...pluginsInit, postcssKremling(kremlingNamespace)() ])
     .process(source, {
       ...restOfOptions,
       to: './',
@@ -28,9 +30,9 @@ module.exports = function(source) {
     })
     .then((result) => {
       if (result.css) {
-        callback(null, `module.exports = { styles: '${result.toString().replace(/(\s)+/g, ' ')}', id: '${kremId.id}', ${kremlingNamespace} };`);
+        callback(null, `module.exports = { styles: '${result.toString().replace(/(\s)+/g, ' ').replace(/'/g, `\\'`)}', id: '${kremId.id}', ${kremlingNamespaceString} };`);
       } else {
-        callback(null, `module.exports = { styles: '', id: '${kremId.id}', ${kremlingNamespace} };`);
+        callback(null, `module.exports = { styles: '', id: '${kremId.id}', ${kremlingNamespaceString} };`);
       }
     });
 };
