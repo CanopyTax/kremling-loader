@@ -22,24 +22,24 @@ $ yarn add -D kremling-loader
 
 ```js
 // webpack.config.js
-...
-config.module = {
-  rules: [
-    {
-      test: /\.css$/,
-      use: [
-        {
-          loader: 'kremling-loader',
-          options: {
-            namespace: 'custom-namespace',
-            postcss: {},
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'kremling-loader',
+            options: {
+              namespace: 'custom-namespace',
+              postcss: {},
+            },
           },
-        },
-      ],
-    },
-  ],
-};
-...
+        ],
+      },
+    ],
+  }
+}
 ```
 
 ### Loader Options
