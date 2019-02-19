@@ -1,5 +1,7 @@
 # kremling-loader
 
+[![npm version](https://img.shields.io/npm/v/kremling-loader.svg?style=flat-square)](https://www.npmjs.org/package/kremling-loader)
+
 The [`Kremling`](https://github.com/CanopyTax/kremling) webpack loader is an abstraction
 on top of the awesome [`Postcss`](https://github.com/postcss/postcss) project.
 It allows you to process your css the way you'd like, and then it passes formatted data
