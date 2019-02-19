@@ -1,13 +1,8 @@
-const kremlingId = require('../src/kremling-id');
 const { parseEsModuleString, webpackMock } = require('./utils');
 
 const mockKremlingLoader = new webpackMock();
 
 describe('kremling-loader', () => {
-  beforeEach(() => {
-    kremlingId.id = 0;
-  });
-
   test('should output a valid es module', done => {
     mockKremlingLoader.run('.a{}', null, result => {
       expect(!!parseEsModuleString(result)).toBe(true);  
@@ -17,14 +12,14 @@ describe('kremling-loader', () => {
 
   test('should prepend all selectors with kremling selector', done => {
     mockKremlingLoader.run('.a{}', null, result => {
-      expect(parseEsModuleString(result).styles).toBe('[data-kremling="1"] .a,[data-kremling="1"].a{}');
+      expect(parseEsModuleString(result).styles).toBe('[kremling="p1"] .a,[kremling="p1"].a{}');
       done();
     })
   });
 
   test('should reverse order of the first selector if the selector is not a class or id', done => {
     mockKremlingLoader.run('[title]{}', null, result => {
-      expect(parseEsModuleString(result).styles).toBe('[data-kremling="1"] [title],[title][data-kremling="1"]{}');
+      expect(parseEsModuleString(result).styles).toBe('[kremling="p2"] [title],[title][kremling="p2"]{}');
       done();
     });
   })
@@ -36,7 +31,7 @@ describe('kremling-loader', () => {
         background-color: red;
       }`;
 
-    const newCss = '[data-kremling="1"] .okay,[data-kremling="1"] input,[data-kremling="1"].okay,input[data-kremling="1"] { background-color: red; }';
+    const newCss = '[kremling="p3"] .okay,[kremling="p3"] input,[kremling="p3"].okay,input[kremling="p3"] { background-color: red; }';
       mockKremlingLoader.run(css, null, result => {
         expect((parseEsModuleString(result).styles).trim()).toEqual(newCss.trim());
         done();
@@ -47,7 +42,7 @@ describe('kremling-loader', () => {
     const css = `
       .okay {background-color: red;}
     `;
-    const newCss = `[pizza="1"] .okay,[pizza="1"].okay {background-color: red;}`
+    const newCss = `[pizza="p4"] .okay,[pizza="p4"].okay {background-color: red;}`
     const options = { namespace: 'pizza' };
     mockKremlingLoader.run(css, options, result => {
       const resultObj = parseEsModuleString(result);
