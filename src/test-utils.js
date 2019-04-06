@@ -1,4 +1,4 @@
-const kremlingLoader = require('../index');
+const kremlingLoader = require('./kremling-loader');
 
 exports.parseEsModuleString = function(str) {
   // make sure this is an es module

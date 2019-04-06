@@ -5,7 +5,7 @@ module.exports = function(id, namespace) {
   function parseSelectors(ruleSelectors, space) {
     return parser(selectors => {
       selectors.each(selector => {
-        const attr = parser.attribute({ attribute: `${namespace}="p${id}"` });
+        const attr = parser.attribute({ attribute: `${namespace}="${id}"` });
         const combinator = parser.combinator({ value: ' ' });
   
         if (selector.at(0).type === 'class' || selector.at(0).type === 'id' || space) {

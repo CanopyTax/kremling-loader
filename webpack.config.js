@@ -14,7 +14,7 @@ config.module = {
       test: /\.css$/,
       use: [
         {
-          loader: path.resolve(__dirname, 'index.js'),
+          loader: path.resolve(__dirname, 'src', 'kremling-loader.js'),
           options: {
             namespace: 'custom',
             postcss: {
@@ -26,7 +26,19 @@ config.module = {
           },
         },
       ],
-    }
+    },
+    {
+      test: /\.js$/,
+      use: [
+        {
+          loader: path.resolve(__dirname, 'src', 'kremling-inline-loader.js'),
+          options: {
+            namespace: 'super-custom',
+            postcss: { plugins: { autoprefixer: {} } },
+          },
+        },
+      ],
+    },
   ],
 }
 

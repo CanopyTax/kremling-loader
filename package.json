@@ -1,17 +1,17 @@
 {
   "name": "kremling-loader",
   "version": "1.0.1",
-  "main": "index.js",
+  "main": "src/kremling-loader.js",
   "author": "@geoctrl",
   "license": "MIT",
   "repository": "git@github.com:CanopyTax/kremling-loader.git",
   "scripts": {
     "start": "webpack-serve --config ./webpack.config.js --content ./dev-env --port 8080",
-    "test": "jest ./test",
-    "watch-tests": "jest ./test --watch"
+    "test": "jest ./src",
+    "watch-tests": "jest ./src --watch"
   },
   "devDependencies": {
-    "autoprefixer": "^9.4.7",
+    "autoprefixer": "^9.5.0",
     "css-loader": "^2.1.0",
     "cssnano": "^4.1.8",
     "jest": "^24.1.0",

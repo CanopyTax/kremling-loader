@@ -1,4 +1,4 @@
-const { parseEsModuleString, webpackMock } = require('./utils');
+const { parseEsModuleString, webpackMock } = require('./test-utils');
 
 const mockKremlingLoader = new webpackMock();
 
