@@ -1,5 +1,5 @@
 const { getOptions } = require('loader-utils');
-const postcss = require('postcss/lib/postcss');
+const postcss = require('postcss');
 const postcssKremling = require('./postcss-kremling-plugin');
 
 let globalId = 0;
