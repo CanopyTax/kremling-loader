@@ -108,7 +108,7 @@ module.exports = function KremlingInlineLoader(src) {
       }
       // add rule back in
       const SEPARATE = '||KREMLING||';
-      newSource = newSource.replace(ruleLabel, `${ruleIndex}${SEPARATE}${kremlingNamespace}${SEPARATE}${css}`);
+      newSource = newSource.replace(ruleLabel, `k${ruleIndex}${SEPARATE}${kremlingNamespace}${SEPARATE}${css}`);
     }
     callback(null, newSource);
   });
