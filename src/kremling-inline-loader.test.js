@@ -8,7 +8,7 @@ describe('kremling-loader', () => {
     const test = 'const test = k`a{}`';
     const result = '[kremling="k0"] a,a[kremling="k0"]{}';
     mockKremlingLoader.run(test, null, output => {
-      expect(output).toBe(`const test = k\`0||KREMLING||kremling||KREMLING||${result}\``);
+      expect(output).toBe(`const test = k\`k0||KREMLING||kremling||KREMLING||${result}\``);
       done();
     })
   });
@@ -19,7 +19,7 @@ describe('kremling-loader', () => {
     mockKremlingLoader.run(test, null, output => {
       const match = output.match(/`(.*)`/)[0];
       const [id, namespace, styles] = `${match.slice(1, match.length - 1)}`.split('||KREMLING||');
-      expect(id).toEqual('1');
+      expect(id).toEqual('k1');
       expect(namespace).toEqual('kremling');
       expect(styles).toEqual(result);
       done();
