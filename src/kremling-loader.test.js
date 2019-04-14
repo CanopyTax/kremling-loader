@@ -1,6 +1,7 @@
+const kremlingLoader = require('./kremling-loader');
 const { parseEsModuleString, webpackMock } = require('./test-utils');
 
-const mockKremlingLoader = new webpackMock();
+const mockKremlingLoader = new webpackMock(kremlingLoader);
 
 describe('kremling-loader', () => {
   test('should output a valid es module', done => {

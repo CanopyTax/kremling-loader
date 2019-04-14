@@ -20,8 +20,8 @@ config.module = {
             postcss: {
               plugins: {
                 'autoprefixer': {},
-                'cssnano': {},
-              },  
+                // 'cssnano': {},
+              },
             },
           },
         },
@@ -31,7 +31,7 @@ config.module = {
       test: /\.js$/,
       use: [
         {
-          loader: path.resolve(__dirname, 'src', 'kremling-inline-loader.js'),
+          loader: path.resolve(__dirname, 'src/kremling-inline-loader.js'),
           options: {
             namespace: 'super-custom',
             postcss: { plugins: { autoprefixer: {} } },

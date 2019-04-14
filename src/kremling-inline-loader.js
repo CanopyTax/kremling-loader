@@ -1,11 +1,18 @@
-const { getOptions } = require('loader-utils');
 const postcss = require('postcss');
+const { getOptions } = require('loader-utils');
+
 const postcssKremlingPlugin = require('./postcss-kremling-plugin');
+const { testKremling, testPlaceholder } = require('./kremling-inline-loader.utils');
 
 const placeholderName = (id) => `__KREMLING_PLACEHOLDER_${id}__`;
+const ruleName = (id) => `__KREMLING_RULE_${id}__`;
 let rootIndex = 0;
 
-module.exports = function KremlingJsLoader(src) {
+module.exports = function KremlingInlineLoader(src) {
+  const ruleIndex = rootIndex;
+  rootIndex++;
+
+  // loader options
   const loaderOptions = getOptions(this) || {};
   let kremlingNamespace = 'kremling';
   if (loaderOptions.namespace && typeof loaderOptions.namespace === 'string') {
@@ -21,78 +28,89 @@ module.exports = function KremlingJsLoader(src) {
     return require(key)(plugins[key]);
   });
 
-  const testRegex = new RegExp('krem`', 'g');
-  let kremlings = [];
+  // loader stuff
+  const callback = this.async();
+  const chars = Array.from(src);
+  const ruleMap = {};
   let newSource = src;
-  let outerPlaceholderMap = {};
+  let offset = 0;
 
-  while(testRegex.exec(newSource)) {
-    kremlings.push(testRegex.lastIndex);
+  let config = {
+    placeholderDepth: 0,
+    startArray: [],
+    endArray: [],
+  };
+
+  // skip files that don't use the kremling tag
+  if (!src.match(/=(\s+)k`|=k`/g)) return callback(null, src);
+
+  for (let i = 0; i < chars.length; i++) {
+    config = testKremling(newSource, i, config);
   }
-  // don't process lines if there's no kremlings
-  if (!kremlings) return newSource;
 
-  kremlings.forEach((k, kremlingIndex) => {
-    let allKremlings = [];
-    while(testRegex.exec(newSource)) {
-      allKremlings.push(testRegex.lastIndex);
-    }
-    const start = allKremlings[kremlingIndex];
-    const test = newSource.slice(start);
-    const placeholderMap = {};
-    let placeholder = 0;
-    let end = -1;
-    let offset = 0;
+  config.startArray.forEach((item, i) => {
+    const start = item - offset;
+    const end = config.endArray[i] - offset;
+    const label = ruleName(i);
+    const content = newSource.slice(start, end);
+    ruleMap[label] = { label, content, placeholders: [] };
+    newSource = `${newSource.slice(0, start)}${label}${newSource.slice(end)}`;
+    offset += content.length - label.length;
+  });
 
-    // find end of template literal
-    for (let i = 0; i < test.length && end === -1; i++) {
-      if (test[i] === '$' && test[i + 1] === '{') {
-        if (placeholder === 0) {
-          placeholderMap[`${placeholderName(start)}`] = { startPlaceholder: start + i };
-        }
-        placeholder++;
-      }
-      if (test[i] === '}' && placeholder > 0) {
-        placeholder--;
-        if (placeholder === 0) {
-          placeholderMap[`${placeholderName(start)}`].endPlaceholder = start + i + 1;
-        }
-      }
-      // check for backtick, unless we're inside a placeholder
-      if (placeholder === 0 && test[i] === '`' && test[i - 1] !== '\\') {
-        end = start + i;
-      }
+  const processMap = Object.keys(ruleMap).reduce((processes, ruleKey) => {
+    let ruleOffset = 0;
+    let ruleContent = ruleMap[ruleKey].content;
+    let ruleLabel = ruleMap[ruleKey].label;
+    const ruleChars = Array.from(ruleContent);
+    let ruleConfig = {
+      placeholderDepth: 0,
+      startArray: [],
+      endArray: [],
+    };
+    for (let i = 0; i < ruleChars.length; i++) {
+      ruleConfig = testPlaceholder(ruleContent, i, ruleConfig);
     }
 
-    // replace placeholders
-    Object.keys(placeholderMap).forEach(key => {
-      const { startPlaceholder, endPlaceholder } = placeholderMap[key];
-      placeholderMap[key].content = newSource.slice(startPlaceholder, endPlaceholder);
-      offset += placeholderMap[key].content.length - key.length;
-      newSource = `${newSource.slice(0, startPlaceholder)}${key}${newSource.slice(endPlaceholder)}`;
+    const placeholders = ruleConfig.startArray.map((item, i) => {
+      const start = item - ruleOffset;
+      const end = ruleConfig.endArray[i] - ruleOffset;
+      const label = placeholderName(i);
+      const content = ruleMap[ruleKey].content.slice(start, end);
+      ruleMap[ruleKey].content = `${ruleMap[ruleKey].content.slice(0, start)}${label}${ruleMap[ruleKey].content.slice(end)}`;
+      ruleOffset += content.length - label.length;
+      return { label, content };
     });
 
-    // process css
-    const css = postcss([ ...pluginsInit, postcssKremlingPlugin(`k${rootIndex}`, kremlingNamespace)])
-      .process(newSource.slice(start, end - offset), {
-        ...restOfOptions,
-        to: './',
-        from: './',
-      }).css;
-    newSource = `${newSource.slice(0, start)}\${'${kremlingNamespace}'}\${'k${rootIndex}'}${css}${newSource.slice(end - offset)}`;
+    return [
+      ...processes,
+      {
+        ruleLabel,
+        placeholders,
+        process: postcss([ ...pluginsInit, postcssKremlingPlugin(`k${ruleIndex}`, kremlingNamespace)])
+          .process(ruleMap[ruleKey].content, {
+            ...restOfOptions,
+            to: './',
+            from: './',
+          })
+      }
+    ];
+  }, []);
 
-    outerPlaceholderMap = {
-      ...outerPlaceholderMap,
-      ...placeholderMap,
+  Promise.all(processMap.map(p => p.process)).then((results) => {
+    for (let i = 0; i < results.length; i++) {
+      let { css } = results[i];
+      const { placeholders, ruleLabel } = processMap[i];
+      // add placeholders back in
+      for (let j = 0; j < placeholders.length; j++) {
+        const { label, content } = placeholders[j];
+        css = css.replace(label, content);
+      }
+      // add rule back in
+      const SEPARATE = '||KREMLING||';
+      newSource = newSource.replace(ruleLabel, `${ruleIndex}${SEPARATE}${kremlingNamespace}${SEPARATE}${css}`);
     }
-    rootIndex++;
+    callback(null, newSource);
   });
 
-  // put placeholders back in
-  Object.keys(outerPlaceholderMap).forEach(key => {
-    const { content } = outerPlaceholderMap[key];
-    newSource = newSource.replace(key, content);
-  });
-
-  return newSource;
 }
