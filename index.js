@@ -20,12 +20,12 @@ module.exports = function(source) {
   };
 
   const { plugins, ...restOfOptions } = defaultOptions;
-  pluginsInit = (Object.keys(plugins)).map(key => {
+  const pluginsInit = (Object.keys(plugins)).map(key => {
     return require(key)(plugins[key]);
   });
 
   const callback = this.async();
-  postcss([ ...pluginsInit, postcssKremling(id, kremlingNamespace)() ])
+  postcss([ ...pluginsInit, postcssKremling(`p${id}`, kremlingNamespace)() ])
     .process(source, {
       ...restOfOptions,
       to: './',
