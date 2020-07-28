@@ -99,13 +99,26 @@ First, write your css:
 }
 ```
 
-We then `import` our styles into our component file, and pass it to the `<Scoped>` prop called `postcss`.
+We then `import` our styles into our component file, and pass it to the `useCss` hook:
+
+```js
+import React from 'react';
+import css from './style.css';
+
+export default function Foo(props) {
+  const scope = useCss(css);
+  
+  return <div {...scope} className="container"></div>
+}
+```
+
+Alternatively, for class components:
 
 ```js
 import React, { Component } from 'react';
 import css from './style.css';
 
-export default class extends Component {
+export default class Foo extends Component {
   render() {
     return (
       <Scoped postcss={css}>
