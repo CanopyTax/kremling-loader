@@ -30,4 +30,8 @@ config.module = {
   ],
 }
 
+config.devServer = {
+  contentBase: path.resolve(__dirname, 'dev-env')
+};
+
 module.exports = config;

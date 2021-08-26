@@ -1,3 +1,7 @@
+:root {
+  --test: red;
+}
+
 .other {
   background: red;
 }
