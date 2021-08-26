@@ -25,7 +25,7 @@ module.exports = function(source) {
   });
 
   const callback = this.async();
-  postcss([ ...pluginsInit, postcssKremling(`p${id}`, kremlingNamespace)() ])
+  postcss([ ...pluginsInit, postcssKremling({ id: `p${id}`, namespace: kremlingNamespace }) ])
     .process(source, {
       ...restOfOptions,
       to: './',
