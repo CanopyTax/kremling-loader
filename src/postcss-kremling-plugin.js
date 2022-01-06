@@ -1,32 +1,44 @@
 const parser = require('postcss-selector-parser');
 
 module.exports = ({ id, namespace }) => {
+  function parseSelectors(ruleSelectors, left) {
+    let scope = true;
+    const output = parser(selectors => {
+      if (left) {
+        const s = selectors.first.first;
+        if (s.type === 'pseudo') {
+          if (s.value === ':global') {
+            s.remove();
+          }
+          scope = false;
+          return;
+        }
+      }
+      selectors.each(selector => {
+        const attr = parser.attribute({ attribute: `${namespace}="${id}"` });
+        const combinator = parser.combinator({ value: ' ' });
+        if (selector.at(0).type === 'class' || selector.at(0).type === 'id' || left) {
+          selector.insertBefore(selector.at(0), attr);
+          if (left) selector.insertAfter(selector.at(0), combinator);
+        } else {
+          selector.insertAfter(selector.at(0), attr);
+        }
+        return selector;
+      });
+    }).processSync(ruleSelectors, { lossless: false });
+    return { output, scope };
+  }
   return {
     postcssPlugin: 'postcss-kremling-plugin',
     Root(root) {
       root.walkRules(function (rule) {
-        rule.selector = parser(selectors => {
-          selectors.each(selector => {
-            // omit pseudo classes
-            if (selector.first.type === 'pseudo') {
-              if (selector.first.value === ':global') {
-                selector.first.remove();
-              }
-              return selector;
-            }
+        const { output: left, scope } = parseSelectors(rule.selector, true);
+        let right = '';
+        if (scope) {
+          right = parseSelectors(rule.selector, false).output;
+        }
 
-            if (selector.first.type === 'class' || selector.first.type === 'id') {
-              const attr = parser.attribute({ attribute: `${namespace}="${id}"` });
-              const newSelector = selector.clone();
-              newSelector.insertAfter(selector.at(0), parser.combinator({ value: ' ' }));
-              newSelector.insertAfter(selector.at(1), attr);
-              selector.insertBefore(selector.first, newSelector);
-              selector.insertAfter(selector.at(0), parser.combinator({ value: ', ' }));
-              selector.insertAfter(selector.at(1), attr);
-            }
-            return selector;
-          });
-        }).processSync(rule.selector, { lossless: false });
+        rule.selector = `${left.trim()}${right ? `,${right.trim()}` : ''}`;
         return rule;
       });
     },

@@ -128,3 +128,42 @@ export default class Foo extends Component {
   }
 }
 ```
+
+## Opt-out of scoping
+
+### A quick look at `kremling` scoping
+`kremling` css by default is **global**, and it requires you to opt-in to scoping by
+prepending an ampersand (&) symbol at the beginning of each rule:
+
+```js
+
+const css = `
+  .global {
+    background-color: blue;
+  }
+
+  & .scoped {
+    background-color: red;
+  }
+`;
+
+```
+
+### `kremling-loader` scoping
+
+Funny enough, `kremling-loader` is the exact opposite 🥴. Since the loader
+intelligently adds scoping without ampersands, by default, the css is always
+**scoped**. You have to opt-out of scoping by  prepending a `:global` pseudo
+class at the beginning of your rule:
+
+```scss
+// scoped
+.scoped {
+  background-color: blue;
+}
+
+// global
+:global .global {
+  background-color: red;
+}
+```
