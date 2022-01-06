@@ -1,4 +1,3 @@
-.okay,
-input {
+:global .test {
   background-color: red;
 }
