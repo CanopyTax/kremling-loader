@@ -136,7 +136,6 @@ export default class Foo extends Component {
 prepending an ampersand (&) symbol at the beginning of each rule:
 
 ```js
-
 const css = `
   .global {
     background-color: blue;
@@ -146,7 +145,6 @@ const css = `
     background-color: red;
   }
 `;
-
 ```
 
 ### `kremling-loader` scoping
