@@ -20,7 +20,7 @@ config.module = {
             postcss: {
               plugins: {
                 'autoprefixer': {},
-                // 'cssnano': {},
+                'cssnano': {},
               },
             },
           },
