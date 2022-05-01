@@ -21,7 +21,7 @@ config.module = {
               plugins: {
                 'autoprefixer': {},
                 'cssnano': {},
-              },  
+              },
             },
           },
         },
