@@ -6,7 +6,7 @@ module.exports = ({ id, namespace }) => {
     const output = parser(selectors => {
       if (left) {
         const s = selectors.first.first;
-        if (s.type === 'pseudo') {
+        if (s.type === 'pseudo' || s.type === 'tag') {
           if (s.value === ':global') {
             s.remove();
           }
