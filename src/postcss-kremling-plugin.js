@@ -14,7 +14,6 @@ module.exports = ({ id, namespace }) => {
           return;
         }
       }
-
       selectors.each(selector => {
         const attr = parser.attribute({ attribute: `${namespace}="${id}"` });
         const combinator = parser.combinator({ value: ' ' });
