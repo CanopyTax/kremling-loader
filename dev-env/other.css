@@ -1,7 +1,23 @@
-:root {
-  --test: red;
+.other {
+  background-color: blue;
+  animation: my-animation;
 }
 
-.other {
-  background: red;
+@media (min-width: 256px) {
+  .other {
+    background-color: red;
+  }
+}
+
+@keyframes my-animation {
+  from {
+    background-color: #ff7a59;
+    width: 300px;
+    top: 10px;
+  }
+  to {
+    background-color: #33475b;
+    width: 50px;
+    top: 100px;
+  }
 }
