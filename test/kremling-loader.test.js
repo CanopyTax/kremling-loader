@@ -39,6 +39,16 @@ describe('kremling-loader', () => {
     expect(!!await run('double-single-quotes.css')).toBe(true);
   });
 
+  test('should work with elements', async () => {
+    const result = `[kremling="p8"] a,a[kremling="p8"] { background-color: red; } [kremling="p8"] customElement,customElement[kremling="p8"] { border: solid; } `;
+    expect((await run('different-types.css')).styles).toBe(result);
+  });
+
+  test('should work with keyframes', async () => {
+    const result = `[kremling="p9"] .test,[kremling="p9"].test { animation-duration: 3s; animation-name: somethingCustom; } @keyframes somethingCustom { from { width: 1px; } to { width: 100px; } 25% { width: 200px; } } `;
+    expect((await run('animations.css')).styles).toBe(result);
+  });
+
   test('should use postcss plugins from webpack config options', async () => {
     const output = (await run('config-options.css', {
       postcss: {
