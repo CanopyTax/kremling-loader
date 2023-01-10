@@ -1,0 +1,20 @@
+.test {
+  animation-duration: 3s;
+  animation-name: somethingCustom;
+}
+
+
+
+@keyframes somethingCustom {
+  from {
+    width: 1px;
+  }
+
+  to {
+    width: 100px;
+  }
+
+  25% {
+    width: 200px;
+  }
+}

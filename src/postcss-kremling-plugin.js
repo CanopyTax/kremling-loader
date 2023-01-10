@@ -6,7 +6,7 @@ module.exports = ({ id, namespace }) => {
     const output = parser(selectors => {
       if (left) {
         const s = selectors.first.first;
-        if (s.type === 'pseudo' || s.type === 'tag') {
+        if (s.type === 'pseudo') {
           if (s.value === ':global') {
             s.remove();
           }
@@ -32,6 +32,7 @@ module.exports = ({ id, namespace }) => {
     postcssPlugin: 'postcss-kremling-plugin',
     Root(root) {
       root.walkRules(function (rule) {
+        if (rule?.parent?.name === 'keyframes') return rule;
         const { output: left, scope } = parseSelectors(rule.selector, true);
         let right = '';
         if (scope) {
