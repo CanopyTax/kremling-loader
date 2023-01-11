@@ -1,12 +1,13 @@
 const postcss = require('postcss');
 const postcssKremling = require('./src/postcss-kremling-plugin');
+const { getOptions } = require('loader-utils');
 
 let globalId = 0;
 
 module.exports = function(source) {
   const id = globalId;
   globalId += 1;
-  const loaderOptions = this.getOptions() || {};
+  const loaderOptions = getOptions(this) || {};
   let kremlingNamespace = 'kremling';
   let kremlingNamespaceString = '';
   if (loaderOptions.namespace && typeof loaderOptions.namespace === 'string') {
