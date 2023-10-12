@@ -1,6 +1,6 @@
 {
   "name": "kremling-loader",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "index.js",
   "author": "@geoctrl",
   "license": "MIT",
@@ -25,5 +25,6 @@
   },
   "dependencies": {
     "postcss-selector-parser": "^6.0.11"
-  }
+  },
+  "packageManager": "yarn@3.6.4"
 }
